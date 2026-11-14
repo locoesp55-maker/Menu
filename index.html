@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menú del bot</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:linear-gradient(160deg,#0f172a,#2e1065);min-height:100vh;color:#fff;padding:16px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom))}
+h1{font-size:26px}
+.sub{color:#c4b5fd;font-size:13px;letter-spacing:2px;margin-bottom:14px}
+.badge{float:right;background:rgba(52,211,153,.15);color:#34d399;border:1px solid #34d399;border-radius:20px;padding:4px 12px;font-size:13px}
+#buscar{width:100%;padding:13px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;font-size:16px;margin-bottom:12px;outline:none}
+#cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px}
+.chip{flex:none;padding:9px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:14px}
+.chip.on{border-color:#34d399;color:#34d399;background:rgba(52,211,153,.12)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
+.card b{color:#34d399;font-size:17px}
+.card p{font-size:13px;color:#ddd6fe;margin-top:4px}
+.card .det{display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15);font-size:13px;color:#fff}
+.card .det i{display:block;color:#fcd34d;margin-top:6px;font-style:normal}
+.card.open{grid-column:1/-1;border-color:#a78bfa}
+.card.open .det{display:block}
+.vacio{grid-column:1/-1;text-align:center;color:#c4b5fd;padding:30px}
+</style>
+</head>
+<body>
+<span class="badge" id="total"></span>
+<h1>Menú</h1>
+<div class="sub">MENÚ INTERACTIVO</div>
+<input id="buscar" type="search" placeholder="Buscar comando...">
+<div id="cats"></div>
+<div class="grid" id="lista"></div>
+
+<script>
+const PREFIJO = '*'
+
+// Para agregar un comando nuevo, copia una línea y cambia los datos
+const COMANDOS = [
+  { n: 'perfil',   cat: 'Perfil',   corta: 'Tu tarjeta de perfil', detalle: 'Muestra una imagen con tu foto, nivel, XP y monedas. También funciona con perfiles.', uso: 'perfil' },
+  { n: 'daily',    cat: 'Economía', corta: 'Recompensa diaria',    detalle: 'Te da 500 monedas y 20 XP. Se usa una vez cada 24 horas.', uso: 'daily' },
+  { n: 'trabajar', cat: 'Economía', corta: 'Gana monedas',         detalle: 'Ganas entre 50 y 150 mon
+    
