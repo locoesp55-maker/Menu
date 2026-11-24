@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17133a">
+<title>Comandos del bot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noche: #17133a;
+  --capa: #211b4d;
+  --linea: #352f6b;
+  --texto: #f3f0ff;
+  --suave: #b9b2dc;
+  --tenue: #8a83b5;
+  --sol: #ffc53d;
+  --menta: #4ade9a;
+  --ui: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --cod: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--noche); color: var(--texto);
+  font: 400 16px/1.5 var(--ui); min-height: 100vh;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--sol); outline-offset: 2px; }
+
+.cabeza {
+  position: sticky; top: 0; z-index: 5; background: var(--noche);
+  padding: 18px 16px 0; border-bottom: 1px solid var(--linea);
+}
+.titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+.titulo h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin: 0; }
+.titulo h1 .sol { color: var(--sol); }
+.titulo p { margin: 0; font-size: 14px; color: var(--suave); white-space: nowrap; }
+
+.redactor {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--capa); border: 1px solid var(--linea); border-radius: 26px;
+  padding: 0 8px 0 18px; height: 52px;
+}
+.redactor:focus-within { border-color: var(--sol); }
+.redactor .pre { font: 500 24px/1 var(--cod); color: var(--sol); }
+.redactor input {
+  flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--texto);
+  font: 400 18px/1 var(--cod); height: 100%;
+}
+.redactor input::placeholder { color: var(--tenue); font-family: var(--ui); }
+.redactor .borrar {
+  width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--linea);
+  font-size: 18px; cursor: pointer; visibility: hidden;
+}
+.redactor.con-texto .borrar { visibility: visible; }
+.leyenda { margin: 8px 4px 12px; font-size: 13px; color: var(--tenue); }
+.leyenda code { font-family: var(--cod); font-size: 12px; }
+.leyenda .r { color: var(--menta); }
+.leyenda .o { color: var(--suave); }
+
+.cats {
+  display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px; margin: 0 -16px;
+  scrollbar-width: none; scroll-snap-type: x proximity;
+}
+.cats::-webkit-scrollbar { display: none; }
+.cat {
+  flex: none; scroll-snap-align: start; border: 1px solid var(--linea); background: none;
+  border-radius: 18px; padding: 7px 14px; font-size: 15px; cursor: pointer; white-space: nowrap;
+}
+.cat span { color: var(--tenue); font-size: 13px; margin-left: 4px; }
+.cat[aria-pressed="true"] { background: var(--sol); border-color: var(--sol); color: var(--noche); font-weight: 600; }
+.cat[aria-pressed="true"] span { color: #5b4500; }
+.cabeza.buscando .cats { display: none; }
+
+main { padding: 0 16px 48px; max-width: 640px; margin: 0 auto; }
+.seccion { padding: 22px 0 8px; }
+.seccion h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.01em; }
+.seccion p { margin: 2px 0 0; color: var(--suave); font-size: 15px; }
+
+.lista { list-style: none; margin: 0; padding: 0; }
+.item { border-bottom: 1px solid var(--linea); }
+.fila {
+  display: block; width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 14px 0; -webkit-tap-highlight-color: transparent;
+}
+.sintaxis { font: 500 16px/1.4 var(--cod); color: var(--menta); overflow-wrap: break-word; }
+.sintaxis .p { color: var(--sol); }
+.sintaxis .r { color: var(--menta); opacity: .75; font-weight: 400; }
+.sintaxis .o { color: var(--suave); font-weight: 400; }
+.sintaxis .m { color: #9cc4ff; font-weight: 400; }
+.corta { display: block; margin-top: 3px; color: var(--suave); font-size: 15px; line-height: 1.4; }
+.etq { display: inline-block; margin-left: 6px; font-size: 12px; color: var(--tenue); font-family: var(--ui); font-weight: 400; }
+
+.detalle { padding: 0 0 16px; }
+.detalle[hidden] { display: none; }
+.detalle dl { margin: 0; display: grid; gap: 10px; }
+.detalle dt { font-size: 13px; color: var(--tenue); }
+.detalle dd { margin: 2px 0 0; }
+.detalle .ej { font: 400 15px/1.4 var(--cod); color: var(--texto); background: var(--capa); border-radius: 8px; padding: 8px 10px; overflow-wrap: anywhere; }
+.detalle .nota { color: var(--suave); font-size: 15px; }
+.acciones { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.acciones button, .acciones a {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px;
+  border-radius: 22px; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.copiar { background: var(--sol); color: var(--noche); border: 0; }
+.chat { color: var(--texto); border: 1px solid var(--linea); background: none; }
+
+.vacio { padding: 40px 4px; color: var(--suave); }
+.vacio strong { display: block; color: var(--texto); font-size: 18px; margin-bottom: 4px; }
+
+.aviso {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0;
+  background: var(--texto); color: var(--noche); font-weight: 600; padding: 10px 18px; border-radius: 22px;
+  transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.aviso.ver { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .aviso { transition: none; } }
+</style>
+</head>
+<body>
+<header class="cabeza" id="cabeza">
+  <div class="titulo">
+    <h1>Comandos<span class="sol">*</span></h1>
+    <p id="total"></p>
+  </div>
+  <label class="redactor" id="redactor">
+    <span class="pre" id="prefijo" aria-hidden="true">*</span>
+    <input id="buscar" type="text" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Busca un comando o tema" aria-label="Buscar comando">
+    <button class="borrar" id="borrar" type="button" aria-label="Borrar búsqueda">×</button>
+  </label>
+  <p class="leyenda"><code class="r">&lt;texto&gt;</code> es obligatorio y <code class="o">[texto]</code> es opcional</p>
+  <nav class="cats" id="cats" aria-label="Categorías"></nav>
+</header>
+<main id="contenido"></main>
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script>
+window.MENU = /*DATOS*/{"prefijo": "*", "numero": "51916282944", "categorias": {"economia": {"nombre": "Economía", "desc": "Gana, ahorra, apuesta y compra"}, "perfil": {"nombre": "Perfil", "desc": "Tu tarjeta y tus datos"}, "mascotas": {"nombre": "Mascotas", "desc": "Adopta, cuida y pelea"}, "aventura": {"nombre": "Aventuras", "desc": "Mazmorras cooperativas con dados"}, "torneos": {"nombre": "Torneos", "desc": "Competencias en el grupo"}, "diversion": {"nombre": "Diversión", "desc": "Juegos y comandos para reír"}, "interaccion": {"nombre": "Interacción", "desc": "Besos, abrazos y más con GIFs"}, "charla": {"nombre": "Charla", "desc": "Habla, bromea y recuerda (IA)"}, "grupo": {"nombre": "Grupo", "desc": "Administración de grupos"}, "descargas": {"nombre": "Descargas", "desc": "Stickers, música y más"}, "utilidad": {"nombre": "Utilidad", "desc": "Herramientas del bot"}}, "comandos": [{"n": "recompensas", "cat": "economia", "corta": "Mira qué ganas al subir de nivel", "uso": "recompensas [nivel]", "alias": ["niveles", "premios"]}, {"n": "xp", "cat": "economia", "corta": "Tu nivel, tu XP y cómo ganar más", "uso": "xp", "alias": ["progreso", "miniveles"]}, {"n": "ticket", "cat": "economia", "corta": "Abre un 🎫 ticket: premio al azar de la tienda", "uso": "ticket [cantidad]", "alias": ["abrirticket", "usarticket"]}, {"n": "daily", "cat": "economia", "corta": "Recompensa diaria con racha (24h)", "uso": "daily", "alias": []}, {"n": "semanal", "cat": "economia", "corta": "Premio semanal grande (7 días)", "uso": "semanal", "alias": []}, {"n": "trabajar", "cat": "economia", "corta": "Trabaja y gana soles (1h)", "uso": "trabajar", "alias": []}, {"n": "minar", "cat": "economia", "corta": "Mina soles, gemas y minerales raros (30 min)", "uso": "minar", "alias": []}, {"n": "pescar", "cat": "economia", "corta": "Pesca soles, comida y tesoros raros (20 min)", "uso": "pescar", "alias": []}, {"n": "mendigar", "cat": "economia", "corta": "Pide limosna (cada 15 s, poquito)", "uso": "mendigar", "alias": []}, {"n": "banco", "cat": "economia", "corta": "Mira tu dinero", "uso": "banco", "alias": []}, {"n": "depositar", "cat": "economia", "corta": "Guarda soles en el banco", "uso": "depositar <cantidad|todo>", "ejemplo": "depositar 100", "alias": []}, {"n": "retirar", "cat": "economia", "corta": "Saca soles del banco", "uso": "retirar <cantidad|todo>", "ejemplo": "retirar 100", "alias": []}, {"n": "transferir", "cat": "economia", "corta": "Envía soles a otra persona", "uso": "transferir @usuario <cantidad>", "alias": []}, {"n": "robar", "cat": "economia", "corta": "Intenta robar a alguien (1h)", "uso": "robar @usuario", "alias": []}, {"n": "apostar", "cat": "economia", "corta": "Apuesta soles (45% de ganar)", "uso": "apostar <cantidad>", "ejemplo": "apostar 100", "alias": []}, {"n": "cara", "cat": "economia", "corta": "Cara o cruz con apuesta", "uso": "cara <cara|cruz> <cantidad>", "ejemplo": "cara cruz 100", "alias": []}, {"n": "slots", "cat": "economia", "corta": "Tragamonedas", "uso": "slots <cantidad>", "ejemplo": "slots 100", "alias": []}, {"n": "tienda", "cat": "economia", "corta": "Mira lo que se vende (objetos, colores y estructuras de perfil)", "uso": "tienda [colores|estructuras|ver <objeto>]", "alias": []}, {"n": "comprar", "cat": "economia", "corta": "Compra un objeto", "uso": "comprar <objeto> [cantidad]", "ejemplo": "comprar croqueta 3", "alias": []}, {"n": "vender", "cat": "economia", "corta": "Vende objetos (mitad de precio)", "uso": "vender <objeto> [cantidad|todo]", "ejemplo": "vender gema", "alias": []}, {"n": "inventario", "cat": "economia", "corta": "Mira tus objetos", "uso": "inventario", "alias": []}, {"n": "topdinero", "cat": "economia", "corta": "Ranking de los más ricos de este grupo", "uso": "topdinero", "alias": ["top", "topeconomia", "topricos"]}, {"n": "topdineroglobal", "cat": "economia", "corta": "Ranking global de los más ricos que usan el bot", "uso": "topdineroglobal", "alias": ["topeconomiaglobal", "topricosglobal", "topglobaldinero"]}, {"n": "intereses", "cat": "economia", "corta": "Cobra los intereses de tu banco (sin espera)", "uso": "intereses", "alias": ["interes", "rendimiento"]}, {"n": "publicar", "cat": "economia", "corta": "Pon un objeto a la venta en el mercado", "uso": "publicar <objeto> <precio c/u> [cantidad|todo]", "ejemplo": "publicar trucha 150 3", "alias": []}, {"n": "mercado", "cat": "economia", "corta": "Mira lo que venden otros jugadores", "uso": "mercado [objeto|mis]", "alias": ["tiendajug"]}, {"n": "mcomprar", "cat": "economia", "corta": "Compra algo del mercado de jugadores", "uso": "mcomprar <id> [cantidad|todo]", "ejemplo": "mcomprar 3", "alias": ["comprarm"]}, {"n": "mquitar", "cat": "economia", "corta": "Retira una publicación tuya del mercado", "uso": "mquitar <id>", "ejemplo": "mquitar 3", "alias": ["retirarpub"]}, {"n": "misiones", "cat": "economia", "corta": "Misiones del pueblo, raras y semanales (hasta 10.000)", "uso": "misiones", "alias": ["pedidos", "encargos", "mision"]}, {"n": "entregar", "cat": "economia", "corta": "Entrega una misión", "uso": "entregar <número>", "ejemplo": "entregar 1", "alias": ["cumplir"]}, {"n": "cazar", "cat": "economia", "corta": "Sal a buscar el objeto que te falta para una misión (1 de 10 por intento)", "uso": "cazar <misión> [objeto] [veces]", "ejemplo": "cazar 6", "alias": ["buscaritem", "salirabuscar"]}, {"n": "vendertodo", "cat": "economia", "corta": "Vende de golpe el botín barato (guarda lo que necesitan tus misiones)", "uso": "vendertodo [todo]", "alias": ["vtodo"]}, {"n": "ganar", "cat": "economia", "corta": "Guía de todas las formas de ganar dinero", "uso": "ganar", "alias": ["ganardinero", "dinero"]}, {"n": "chambita", "cat": "economia", "corta": "Trabajito rápido (1 min). ¡Hazlas seguidas y sube el combo!", "uso": "chambita", "alias": ["chamba"]}, {"n": "chambitas", "cat": "economia", "corta": "Mira tu combo y lo que has ganado en chambitas", "uso": "chambitas", "alias": ["chambas"]}, {"n": "perfil", "cat": "perfil", "corta": "Tu tarjeta de perfil (o la de otro)", "uso": "perfil [@usuario]", "alias": ["perfiles"]}, {"n": "perfilcard", "cat": "perfil", "corta": "Tu perfil (o el de otro) como tarjeta, sin entrar a la galería", "uso": "perfilcard [@usuario]", "alias": ["tarjeta"]}, {"n": "setnombre", "cat": "perfil", "corta": "Cambia tu nombre", "uso": "setnombre <valor>", "ejemplo": "setnombre Rayo", "alias": []}, {"n": "setedad", "cat": "perfil", "corta": "Cambia tu edad", "uso": "setedad <valor>", "ejemplo": "setedad 20", "alias": []}, {"n": "setgenero", "cat": "perfil", "corta": "Cambia tu género", "uso": "setgenero <valor>", "ejemplo": "setgenero skull 💀", "alias": []}, {"n": "sethobby", "cat": "perfil", "corta": "Cambia tu hobby", "uso": "sethobby <valor>", "ejemplo": "sethobby jugar fútbol", "alias": []}, {"n": "setpais", "cat": "perfil", "corta": "Cambia tu país", "uso": "setpais <valor>", "ejemplo": "setpais Perú", "alias": []}, {"n": "setbio", "cat": "perfil", "corta": "Cambia tu biografía", "uso": "setbio <valor>", "ejemplo": "setbio Me gusta programar", "alias": []}, {"n": "perfilfondo", "cat": "perfil", "corta": "Elige el fondo de tu perfil (muestra la lista)", "uso": "perfilfondo [fondo|quitar]", "ejemplo": "perfilfondo oceano", "alias": []}, {"n": "perfilestilo", "cat": "perfil", "corta": "Elige la estructura de tu tarjeta (muestra la lista)", "uso": "perfilestilo [estructura]", "ejemplo": "perfilestilo cyberpunk", "alias": []}, {"n": "perfilcolor", "cat": "perfil", "corta": "Color de las etiquetas y detalles de tu tarjeta (muestra la lista)", "uso": "perfilcolor [color|#hex|reset]", "ejemplo": "perfilcolor celeste", "alias": []}, {"n": "perfilcolor2", "cat": "perfil", "corta": "Color de tu nombre y tus datos: la otra letra (muestra la lista)", "uso": "perfilcolor2 [color|#hex|reset]", "ejemplo": "perfilcolor2 celeste", "alias": ["perfiltexto"]}, {"n": "perfilfuente", "cat": "perfil", "corta": "Elige la tipografía de tu tarjeta (muestra la lista)", "uso": "perfilfuente [fuente|auto]", "ejemplo": "perfilfuente tektur", "alias": ["perfiltipografia"]}, {"n": "mascotafoto", "cat": "perfil", "corta": "Pon una foto pequeña de tu mascota en tu perfil", "uso": "mascotafoto [quitar]", "ejemplo": "mascotafoto", "alias": []}, {"n": "especies", "cat": "mascotas", "corta": "Lista de mascotas para adoptar", "uso": "especies", "alias": []}, {"n": "adoptar", "cat": "mascotas", "corta": "Adopta una mascota", "uso": "adoptar <especie> [nombre]", "ejemplo": "adoptar perro Firulais", "alias": []}, {"n": "mascota", "cat": "mascotas", "corta": "Mira a tu mascota", "uso": "mascota", "alias": []}, {"n": "nombrar", "cat": "mascotas", "corta": "Cambia el nombre de tu mascota", "uso": "nombrar <nombre>", "ejemplo": "nombrar Rayo", "alias": []}, {"n": "liberar", "cat": "mascotas", "corta": "Libera a tu mascota (no hay reembolso)", "uso": "liberar confirmar", "alias": []}, {"n": "alimentar", "cat": "mascotas", "corta": "Dale de comer a tu mascota (usa comida del inventario)", "uso": "alimentar [croqueta|pescado|festin]", "ejemplo": "alimentar croqueta", "alias": []}, {"n": "jugar", "cat": "mascotas", "corta": "Juega con tu mascota (5 min)", "uso": "jugar", "alias": []}, {"n": "dormir", "cat": "mascotas", "corta": "Haz descansar a tu mascota (20 min). Con energetico recarga al instante", "uso": "dormir [energetico]", "alias": []}, {"n": "curar", "cat": "mascotas", "corta": "Cura a tu mascota con una medicina", "uso": "curar", "alias": []}, {"n": "batalla", "cat": "mascotas", "corta": "Pelea contra un monstruo (15 min)", "uso": "batalla", "alias": []}, {"n": "pelea", "cat": "mascotas", "corta": "Pelea contra la mascota de otro (10 min)", "uso": "pelea @usuario [apuesta]", "alias": []}, {"n": "toppets", "cat": "mascotas", "corta": "Las mejores mascotas", "uso": "toppets", "alias": []}, {"n": "aventura", "cat": "aventura", "corta": "Mazmorras cooperativas con dados y mascotas", "uso": "aventura <crear|unirse|iniciar|salir|estado|stats>", "alias": ["av", "mazmorra", "expedicion"]}, {"n": "accion", "cat": "aventura", "corta": "Elige tu acción y lanza el dado en la aventura", "uso": "accion <n> [mascota]", "alias": ["acc"]}, {"n": "torneo", "cat": "torneos", "corta": "Torneos de mascotas del grupo", "uso": "torneo <crear|unirme|estado|iniciar>", "alias": []}, {"n": "decir", "cat": "diversion", "corta": "El bot repite tu mensaje", "uso": "decir <texto>", "ejemplo": "decir hola a todos", "alias": []}, {"n": "dado", "cat": "diversion", "corta": "Lanza un dado", "uso": "dado", "alias": []}, {"n": "ruleta", "cat": "diversion", "corta": "Ruleta rusa: uno recibe el disparo (opción kick)", "uso": "ruleta [kick|empezar|cancelar]", "ejemplo": "ruleta", "alias": []}, {"n": "jalar", "cat": "diversion", "corta": "Jala el gatillo en tu turno de la ruleta rusa", "uso": "jalar", "alias": []}, {"n": "bomba", "cat": "diversion", "corta": "Pasa la bomba antes de que explote (opción kick)", "uso": "bomba [kick|empezar|cancelar]", "ejemplo": "bomba", "alias": []}, {"n": "pasar", "cat": "diversion", "corta": "Pasa la bomba a otro jugador", "uso": "pasar <número del jugador>", "ejemplo": "pasar 2", "alias": []}, {"n": "espia", "cat": "diversion", "corta": "El espía no sabe la palabra, ¡descúbrelo! (opción kick)", "uso": "espia [kick|empezar|cancelar]", "ejemplo": "espia", "alias": []}, {"n": "votar", "cat": "diversion", "corta": "Vota por quién crees que es el espía", "uso": "votar <número del jugador>", "ejemplo": "votar 2", "alias": []}, {"n": "adivinar", "cat": "diversion", "corta": "Si te descubren, adivina la palabra (espía)", "uso": "adivinar <palabra>", "ejemplo": "adivinar pizza", "alias": []}, {"n": "ttt", "cat": "diversion", "corta": "Tres en raya contra otra persona (opción kick)", "uso": "ttt [@rival] [kick]", "ejemplo": "ttt @amigo", "alias": []}, {"n": "aceptar", "cat": "diversion", "corta": "Acepta un reto de tres en raya", "uso": "aceptar", "alias": []}, {"n": "poner", "cat": "diversion", "corta": "Marca una casilla del tres en raya", "uso": "poner <casilla 1-9>", "ejemplo": "poner 5", "alias": []}, {"n": "trivia", "cat": "diversion", "corta": "Pregunta de cultura general (gana monedas)", "uso": "trivia", "alias": []}, {"n": "r", "cat": "diversion", "corta": "Responde la trivia", "uso": "r <a|b|c|d>", "ejemplo": "r b", "alias": []}, {"n": "ppt", "cat": "diversion", "corta": "Piedra, papel o tijera contra el bot", "uso": "ppt <piedra|papel|tijera>", "ejemplo": "ppt papel", "alias": []}, {"n": "verdad", "cat": "diversion", "corta": "Una pregunta incómoda para responder", "uso": "verdad", "alias": []}, {"n": "reto", "cat": "diversion", "corta": "Un reto divertido para cumplir", "uso": "reto", "alias": []}, {"n": "bola", "cat": "diversion", "corta": "La bola mágica responde tu pregunta", "uso": "bola <pregunta>", "ejemplo": "bola ¿aprobaré el examen?", "alias": []}, {"n": "ship", "cat": "diversion", "corta": "Compatibilidad entre dos personas", "uso": "ship <nombre1> <nombre2>", "ejemplo": "ship Ana Luis", "alias": []}, {"n": "quien", "cat": "diversion", "corta": "Elige a alguien del grupo al azar", "uso": "quien <frase>", "ejemplo": "quien es el más dormilón", "alias": []}, {"n": "papas", "cat": "diversion", "corta": "Papas explosivas: pon tu bomba por privado y evita las de los demás (opción kick)", "uso": "papas [kick|empezar|cancelar]", "ejemplo": "papas", "alias": []}, {"n": "papa", "cat": "diversion", "corta": "Papas: pon tu bomba (por privado) o saca una papa (en el grupo)", "uso": "papa <1-6>", "ejemplo": "papa 3", "alias": []}, {"n": "dados", "cat": "diversion", "corta": "Duelo de dados: la peor tirada pierde (opción kick)", "uso": "dados [kick|empezar|cancelar]", "ejemplo": "dados", "alias": []}, {"n": "tirar", "cat": "diversion", "corta": "Lanza tus dados en el duelo de dados", "uso": "tirar", "alias": []}, {"n": "reflejos", "cat": "diversion", "corta": "Reflejos: reacciona a la señal; el más lento o el que se adelante pierde (opción kick)", "uso": "reflejos [kick|empezar|cancelar]", "ejemplo": "reflejos", "alias": []}, {"n": "ya", "cat": "diversion", "corta": "Reacciona cuando salga la señal en el juego de reflejos", "uso": "ya", "alias": []}, {"n": "cronometro", "cat": "diversion", "corta": "Cronómetro: detén el reloj en el segundo exacto; el que más se aleje pierde (opción kick)", "uso": "cronometro [kick|empezar|cancelar]", "ejemplo": "cronometro", "alias": []}, {"n": "stop", "cat": "diversion", "corta": "Detén el reloj en el juego del cronómetro", "uso": "stop", "alias": []}, {"n": "ponertexto", "cat": "diversion", "corta": "Pone texto arriba o abajo de una imagen, video o GIF", "uso": "ponertexto <arriba|abajo> <texto> [--barra]", "ejemplo": "ponertexto arriba yo en el grupo abajo cuando dicen \"ya voy\"", "alias": ["textomeme", "memetexto", "meme"]}, {"n": "memegrupo", "cat": "diversion", "corta": "Busca algo viral reciente y le pone un texto sobre el grupo", "uso": "memegrupo [tema] [--barra]", "ejemplo": "memegrupo futbol", "alias": ["memeviral", "memeauto", "memetiktok"]}, {"n": "memeregion", "cat": "diversion", "corta": "Elige de qué país sacar lo viral de TikTok (admins)", "uso": "memeregion <código de país, ej. MX, CO, AR, ES>", "ejemplo": "memeregion CO", "alias": ["regionmeme"]}, {"n": "memeplantilla", "cat": "diversion", "corta": "Memes con plantillas (Drake, cerebro, se busca, noticia...) y textos de la IA", "uso": "memeplantilla <plantilla> <texto1> | <texto2>", "ejemplo": "memeplantilla sino audios de 5 min | escribir texto", "alias": ["plantilla", "memeplan"]}, {"n": "memebanco", "cat": "diversion", "corta": "Dale imágenes al bot y él las usa solo cada cierto tiempo (30 min)", "uso": "memebanco <agregar|lista|ver|borrar|ahora|on|off|cada|horas>", "ejemplo": "memebanco agregar mi amigo cuando ve la cuenta", "alias": ["bancomemes", "memeimagenes"]}, {"n": "beso", "cat": "interaccion", "corta": "Acción con GIF: le dio un beso a alguien", "uso": "beso @usuario", "ejemplo": "beso @usuario", "alias": ["besar", "kiss"]}, {"n": "abrazo", "cat": "interaccion", "corta": "Acción con GIF: le dio un abrazo a alguien", "uso": "abrazo @usuario", "ejemplo": "abrazo @usuario", "alias": ["abrazar", "hug"]}, {"n": "caricia", "cat": "interaccion", "corta": "Acción con GIF: le hizo una caricia a alguien", "uso": "caricia @usuario", "ejemplo": "caricia @usuario", "alias": ["acariciar", "pat"]}, {"n": "mimar", "cat": "interaccion", "corta": "Acción con GIF: está mimando a alguien", "uso": "mimar @usuario", "ejemplo": "mimar @usuario", "alias": ["cuddle"]}, {"n": "golpear", "cat": "interaccion", "corta": "Acción con GIF: golpeó a alguien", "uso": "golpear @usuario", "ejemplo": "golpear @usuario", "alias": ["pegar", "punch"]}, {"n": "bofetada", "cat": "interaccion", "corta": "Acción con GIF: le dio una bofetada a alguien", "uso": "bofetada @usuario", "ejemplo": "bofetada @usuario", "alias": ["cachetada", "slap"]}, {"n": "patada", "cat": "interaccion", "corta": "Acción con GIF: le dio una patada a alguien", "uso": "patada @usuario", "ejemplo": "patada @usuario", "alias": ["patear"]}, {"n": "morder", "cat": "interaccion", "corta": "Acción con GIF: mordió a alguien", "uso": "morder @usuario", "ejemplo": "morder @usuario", "alias": ["bite"]}, {"n": "lamer", "cat": "interaccion", "corta": "Acción con GIF: lamió a alguien", "uso": "lamer @usuario", "ejemplo": "lamer @usuario", "alias": ["lick"]}, {"n": "pellizcar", "cat": "interaccion", "corta": "Acción con GIF: pellizcó a alguien", "uso": "pellizcar @usuario", "ejemplo": "pellizcar @usuario", "alias": ["poke"]}, {"n": "cosquillas", "cat": "interaccion", "corta": "Acción con GIF: le hizo cosquillas a alguien", "uso": "cosquillas @usuario", "ejemplo": "cosquillas @usuario", "alias": ["tickle"]}, {"n": "chocar5", "cat": "interaccion", "corta": "Acción con GIF: chocó los cinco con alguien", "uso": "chocar5 @usuario", "ejemplo": "chocar5 @usuario", "alias": ["highfive"]}, {"n": "darlamano", "cat": "interaccion", "corta": "Acción con GIF: le agarró la mano a alguien", "uso": "darlamano @usuario", "ejemplo": "darlamano @usuario", "alias": ["handhold"]}, {"n": "darcomer", "cat": "interaccion", "corta": "Acción con GIF: le dio de comer a alguien", "uso": "darcomer @usuario", "ejemplo": "darcomer @usuario", "alias": ["feed", "darlecomer"]}, {"n": "disparar", "cat": "interaccion", "corta": "Acción con GIF: le disparó a alguien", "uso": "disparar @usuario", "ejemplo": "disparar @usuario", "alias": ["shoot"]}, {"n": "mirar", "cat": "interaccion", "corta": "Acción con GIF: se quedó mirando a alguien", "uso": "mirar @usuario", "ejemplo": "mirar @usuario", "alias": ["stare"]}, {"n": "llorar", "cat": "interaccion", "corta": "Acción con GIF: está llorando", "uso": "llorar", "ejemplo": "llorar", "alias": ["cry"]}, {"n": "reir", "cat": "interaccion", "corta": "Acción con GIF: se está riendo", "uso": "reir", "ejemplo": "reir", "alias": ["reír", "laugh"]}, {"n": "bailar", "cat": "interaccion", "corta": "Acción con GIF: está bailando", "uso": "bailar", "ejemplo": "bailar", "alias": ["dance"]}, {"n": "sonrojar", "cat": "interaccion", "corta": "Acción con GIF: se sonrojó", "uso": "sonrojar", "ejemplo": "sonrojar", "alias": ["blush"]}, {"n": "acostarse", "cat": "interaccion", "corta": "Acción con GIF: se fue a dormir", "uso": "acostarse", "ejemplo": "acostarse", "alias": ["sleep", "siesta"]}, {"n": "feliz", "cat": "interaccion", "corta": "Acción con GIF: está feliz", "uso": "feliz", "ejemplo": "feliz", "alias": ["happy"]}, {"n": "sonreir", "cat": "interaccion", "corta": "Acción con GIF: está sonriendo", "uso": "sonreir", "ejemplo": "sonreir", "alias": ["sonreír", "smile"]}, {"n": "saludar", "cat": "interaccion", "corta": "Acción con GIF: está saludando a todos", "uso": "saludar", "ejemplo": "saludar", "alias": ["wave"]}, {"n": "pensar", "cat": "interaccion", "corta": "Acción con GIF: se puso a pensar", "uso": "pensar", "ejemplo": "pensar", "alias": ["think"]}, {"n": "guinar", "cat": "interaccion", "corta": "Acción con GIF: guiñó el ojo", "uso": "guinar", "ejemplo": "guinar", "alias": ["guiñar", "wink"]}, {"n": "enojado", "cat": "interaccion", "corta": "Acción con GIF: está enojado", "uso": "enojado", "ejemplo": "enojado", "alias": ["enojar", "angry"]}, {"n": "aburrido", "cat": "interaccion", "corta": "Acción con GIF: está aburrido", "uso": "aburrido", "ejemplo": "aburrido", "alias": ["bored"]}, {"n": "bostezar", "cat": "interaccion", "corta": "Acción con GIF: está bostezando", "uso": "bostezar", "ejemplo": "bostezar", "alias": ["yawn"]}, {"n": "habla", "cat": "charla", "corta": "Habla con el bot (humor, sin filtro y con memoria)", "uso": "habla <texto>", "ejemplo": "habla cuéntame un chiste malo", "alias": ["ia", "bot"]}, {"n": "bromear", "cat": "charla", "corta": "El bot menciona a alguien con algo que recuerda de esa persona", "uso": "bromear [@usuario]", "ejemplo": "bromear @usuario", "alias": []}, {"n": "aprende", "cat": "charla", "corta": "Enséñale al bot qué responder cuando alguien diga algo (acepta %, menciones al azar, etc.)", "uso": "aprende <cuando digan> => <respuesta>", "ejemplo": "aprende buenos dias => Buenos días @user ☀️", "alias": []}, {"n": "aprendido", "cat": "charla", "corta": "Lista lo que le enseñaron al bot en este chat", "uso": "aprendido", "alias": []}, {"n": "olvida", "cat": "charla", "corta": "Borra algo que le enseñaron al bot (por número o frase)", "uso": "olvida <número|frase>", "ejemplo": "olvida 2", "alias": []}, {"n": "recuerdos", "cat": "charla", "corta": "Mira lo que el bot recuerda de ti o de otra persona", "uso": "recuerdos [@usuario] | editar <n> <texto> | borrar <n>", "alias": []}, {"n": "olvidame", "cat": "charla", "corta": "Borra todo lo que el bot recuerda de ti (y deja de recordarte)", "uso": "olvidame [volver]", "alias": []}, {"n": "charla", "cat": "charla", "corta": "Activa que el bot hable y se meta solo en el chat", "uso": "charla <on|off|bajo|medio|alto|chistes <0-100>|borrar>", "alias": []}, {"n": "pregunta", "cat": "charla", "corta": "Pregúntale algo en serio al bot (con su personalidad, pero sin insultos)", "uso": "pregunta <tu pregunta>", "ejemplo": "pregunta cuánto tarda en hervir un huevo", "alias": ["preguntar"]}, {"n": "stickeraleatorio", "cat": "charla", "corta": "El bot manda uno de los stickers que tiene guardados", "uso": "stickeraleatorio", "alias": ["stkrandom", "randomsticker", "stickerrandom"]}, {"n": "gifaleatorio", "cat": "charla", "corta": "El bot manda uno de los GIFs que tiene guardados", "uso": "gifaleatorio", "alias": ["gifrandom", "randomgif"]}, {"n": "jergapack", "cat": "charla", "corta": "Paquete base de jergas (lo activa solo el dueño del bot)", "uso": "jergapack <on|off>", "alias": []}, {"n": "jerga", "cat": "charla", "corta": "Enséñale insultos, apodos y jerga del grupo a la IA", "uso": "jerga <palabra o frase> [= significado] | editar <n> <palabra> = <significado> | limite <personas> [<ia>] | lote <n> | frecuencia <0-100> | intensidad <nivel> | adaptar <n>", "ejemplo": "jerga cabeza de chorlito = despistado", "alias": ["insulto"]}, {"n": "stickers", "cat": "charla", "corta": "Configura los stickers temporales que usa el bot", "uso": "stickers <on|off|frecuencia <nivel>|prob <0-100>|falla <0-100>|cada <min>|dura <horas>|borrar>", "alias": []}, {"n": "falla", "cat": "charla", "corta": "Qué hace el bot cuando la IA no responde (stickers o GIFs en vez del mensaje de emergencia)", "uso": "falla <0-100> | modo reemplazar|acompanar | tipo sticker|gif|ambos | probar", "ejemplo": "falla 70", "alias": ["sinia"]}, {"n": "reacciones", "cat": "charla", "corta": "Configura las reacciones con emoji que hace el bot a los mensajes", "uso": "reacciones <on|off|frecuencia <nivel>|prob <0-100>|cada <min>>", "alias": []}, {"n": "gifs", "cat": "charla", "corta": "Configura los GIFs temporales que usa el bot (nunca junto con un sticker)", "uso": "gifs <on|off|frecuencia <nivel>|prob <0-100>|cada <min>|dura <horas>|borrar>", "alias": []}, {"n": "warn", "cat": "grupo", "corta": "Advierte a alguien (con motivo). Al llegar al límite lo expulsa", "uso": "warn @usuario [motivo]", "alias": []}, {"n": "warns", "cat": "grupo", "corta": "Mira las advertencias de alguien (o las tuyas)", "uso": "warns [@usuario]", "alias": []}, {"n": "unwarn", "cat": "grupo", "corta": "Quita la última advertencia (o todas)", "uso": "unwarn @usuario [número|todo]", "alias": []}, {"n": "limitewarn", "cat": "grupo", "corta": "Cambia cuántas advertencias causan expulsión", "uso": "limitewarn <1-10>", "alias": []}, {"n": "advertidos", "cat": "grupo", "corta": "Lista de personas con advertencias", "uso": "advertidos", "alias": []}, {"n": "kick", "cat": "grupo", "corta": "Expulsa a alguien del grupo", "uso": "kick @usuario", "alias": ["eliminar", "expulsar"]}, {"n": "promover", "cat": "grupo", "corta": "Hace admin a alguien", "uso": "promover @usuario", "alias": []}, {"n": "degradar", "cat": "grupo", "corta": "Le quita el admin a alguien", "uso": "degradar @usuario", "alias": []}, {"n": "cerrar", "cat": "grupo", "corta": "Solo los admins pueden escribir en el grupo", "uso": "cerrar", "alias": []}, {"n": "abrir", "cat": "grupo", "corta": "Todos pueden escribir en el grupo", "uso": "abrir", "alias": []}, {"n": "mute", "cat": "grupo", "corta": "Silencia a alguien (el bot borra sus mensajes)", "uso": "mute @usuario", "alias": []}, {"n": "unmute", "cat": "grupo", "corta": "Quita el silencio a alguien", "uso": "unmute @usuario", "alias": []}, {"n": "antilink", "cat": "grupo", "corta": "Borra enlaces de grupos de WhatsApp", "uso": "antilink <on|off>", "alias": []}, {"n": "todos", "cat": "grupo", "corta": "Menciona a todos los del grupo", "uso": "todos [mensaje]", "alias": ["tagall"]}, {"n": "hidetag", "cat": "grupo", "corta": "Notifica a todos sin mostrar las menciones", "uso": "hidetag <mensaje>", "ejemplo": "hidetag reunión a las 8", "alias": []}, {"n": "admins", "cat": "grupo", "corta": "Menciona a los admins", "uso": "admins", "alias": []}, {"n": "link", "cat": "grupo", "corta": "Enlace de invitación del grupo", "uso": "link", "alias": []}, {"n": "nombregrupo", "cat": "grupo", "corta": "Cambia el nombre del grupo", "uso": "nombregrupo <nombre>", "ejemplo": "nombregrupo Los Panas", "alias": []}, {"n": "descgrupo", "cat": "grupo", "corta": "Cambia la descripción del grupo", "uso": "descgrupo <texto>", "ejemplo": "descgrupo Reglas: respeto ante todo", "alias": []}, {"n": "del", "cat": "grupo", "corta": "Borra el mensaje al que respondes", "uso": "del (respondiendo a un mensaje)", "alias": []}, {"n": "infogrupo", "cat": "grupo", "corta": "Resumen y configuración del grupo", "uso": "infogrupo", "alias": []}, {"n": "bienvenida", "cat": "grupo", "corta": "Configura el mensaje de la bienvenida", "uso": "bienvenida <on|off|texto|foto|ver|probar|reset>", "alias": []}, {"n": "despedida", "cat": "grupo", "corta": "Configura el mensaje de la despedida", "uso": "despedida <on|off|texto|foto|ver|probar|reset>", "alias": []}, {"n": "recuperar", "cat": "grupo", "corta": "Activa o apaga la recuperación de mensajes borrados y \"ver una vez\" (admins)", "uso": "recuperar <on|off>", "alias": []}, {"n": "borrados", "cat": "grupo", "corta": "Mira los últimos mensajes de texto borrados del grupo (admins)", "uso": "borrados [cantidad] [privado]", "alias": []}, {"n": "borradosmedia", "cat": "grupo", "corta": "Recupera las últimas fotos, videos y audios borrados (admins)", "uso": "borradosmedia [cantidad] [privado]", "alias": ["bmedia"]}, {"n": "unavez", "cat": "grupo", "corta": "Recupera lo último que mandaron para \"ver una vez\" (admins)", "uso": "unavez [cantidad] [privado]", "alias": []}, {"n": "s", "cat": "descargas", "corta": "Crea un sticker de imagen o video", "uso": "s (en una foto/video o respondiendo a uno)", "alias": ["sticker"]}, {"n": "toimg", "cat": "descargas", "corta": "Convierte un sticker en imagen (o en video si es animado)", "uso": "toimg (responde a un sticker)", "alias": ["tovideo", "togif"]}, {"n": "brat", "cat": "descargas", "corta": "Sticker brat con tu texto (color entre llaves: {rojo})", "uso": "brat [{color}] <texto>", "ejemplo": "brat {rojo} hola que tal", "alias": []}, {"n": "bratanim", "cat": "descargas", "corta": "Sticker brat animado: las palabras van apareciendo (color: {azul})", "uso": "bratanim [{color}] <texto>", "ejemplo": "bratanim {azul} hola que tal", "alias": ["bratv", "bratv"]}, {"n": "play", "cat": "descargas", "corta": "Descarga música por nombre o enlace (agrega \"doc\" para mandarla como documento)", "uso": "play <nombre o enlace> [doc]", "ejemplo": "play bad bunny monaco", "alias": ["musica", "ytmp3"]}, {"n": "playdoc", "cat": "descargas", "corta": "Descarga música/audio como DOCUMENTO (hasta 3 horas: mixes, podcasts)", "uso": "playdoc <nombre o enlace>", "ejemplo": "playdoc mix reggaeton 2024", "alias": ["musicadoc", "ytmp3doc"]}, {"n": "mp3", "cat": "descargas", "corta": "Saca el audio de un video", "uso": "mp3 (en un video o respondiendo a uno)", "alias": ["audio", "tomp3"]}, {"n": "video", "cat": "descargas", "corta": "Descarga videos de YouTube, TikTok, Instagram, Facebook, X y más (agrega \"doc\" para mandarlo como documento, hasta 1 GB)", "uso": "video <enlace o nombre> [doc] [calidad]", "ejemplo": "video https://www.tiktok.com/@usuario/video/123", "alias": ["vid", "ytmp4"]}, {"n": "videodoc", "cat": "descargas", "corta": "Descarga un video como DOCUMENTO (sin compresión, hasta 1 GB y 2 horas)", "uso": "videodoc [480|720|1080] <enlace o nombre>", "ejemplo": "videodoc 720 https://www.youtube.com/watch?v=...", "alias": ["viddoc", "ytmp4doc"]}, {"n": "imagen", "cat": "descargas", "corta": "Descarga imágenes de un enlace (Instagram, X, Pinterest, webs) o busca por texto. Con \"doc\" llegan sin comprimir", "uso": "imagen <enlace o texto> [doc]", "ejemplo": "imagen gatos graciosos", "alias": ["img"]}, {"n": "imagendoc", "cat": "descargas", "corta": "Igual que imagen, pero las manda como DOCUMENTO (calidad original, sin recortes)", "uso": "imagendoc <enlace o texto>", "ejemplo": "imagendoc https://www.instagram.com/p/XXXX/", "alias": []}, {"n": "pinterest", "cat": "descargas", "corta": "Busca imágenes en Pinterest y te manda varias", "uso": "pinterest <búsqueda> [cantidad 1-6]", "ejemplo": "pinterest gatos aesthetic 5", "alias": []}, {"n": "documento", "cat": "descargas", "corta": "Descarga un archivo desde un enlace directo (hasta 1 GB) y te lo manda como documento. También sirve con enlaces de video", "uso": "documento <enlace>", "ejemplo": "documento https://sitio.com/archivo.zip", "alias": ["archivo"]}, {"n": "playlist", "cat": "descargas", "corta": "Playlist de YouTube en segundo plano (estado / cancelar)", "uso": "playlist <enlace>", "ejemplo": "playlist https://www.youtube.com/playlist?list=PLxxxx", "alias": []}, {"n": "montaje", "cat": "descargas", "corta": "Video con tu palabra resaltada en titulares de periódicos y textos reales", "uso": "montaje <palabra>", "ejemplo": "montaje ganar", "alias": ["palabra"]}, {"n": "buscarvideo", "cat": "descargas", "corta": "Busca videos en YouTube y elige cuál bajar", "uso": "buscarvideo <texto>", "ejemplo": "buscarvideo bad bunny monaco", "alias": ["buscar", "bv"]}, {"n": "buscarmusica", "cat": "descargas", "corta": "Busca canciones en YouTube y elige cuál bajar", "uso": "buscarmusica <texto>", "ejemplo": "buscarmusica bad bunny monaco", "alias": ["bm", "buscarcancion"]}, {"n": "elegir", "cat": "descargas", "corta": "Elige un resultado de tu última búsqueda", "uso": "elegir <número>", "ejemplo": "elegir 2", "alias": []}, {"n": "ss", "cat": "descargas", "corta": "Sticker con sonido (experimental)", "uso": "ss (responde a un video, audio o sticker) [doble]", "ejemplo": "ss (respondiendo a un video)", "alias": ["stickersonido", "sonido"]}, {"n": "ping", "cat": "utilidad", "corta": "Probar si el bot está vivo", "uso": "ping", "alias": []}, {"n": "menu", "cat": "utilidad", "corta": "Menú principal", "uso": "menu [comando]", "alias": ["ayuda"]}, {"n": "limpieza", "cat": "utilidad", "corta": "Borra solo los menús y perfiles en foto viejos (dueño)", "uso": "limpieza [horas|on|off|ahora]", "alias": []}, {"n": "iaconfig", "cat": "utilidad", "corta": "Conecta el cerebro (IA) del bot. Solo el dueño", "uso": "iaconfig <gemini|groq|openrouter|openai|claude> <clave>", "alias": []}, {"n": "menu18", "cat": "utilidad", "corta": "Lista de comandos +18 (si están activados)", "uso": "menu18", "alias": []}, {"n": "topmensajes", "cat": "utilidad", "corta": "Ranking de quienes más escriben en este grupo", "uso": "topmensajes", "alias": ["topmsg", "topmsgs", "topchat"]}, {"n": "topmensajesglobal", "cat": "utilidad", "corta": "Ranking global de mensajes de todos los que usan el bot", "uso": "topmensajesglobal", "alias": ["topmsgglobal", "topglobalmsg", "topglobalmensajes"]}, {"n": "mensajes", "cat": "utilidad", "corta": "Cuántos mensajes llevas (o lleva otra persona)", "uso": "mensajes [@usuario]", "ejemplo": "mensajes @usuario", "alias": ["mismensajes", "msgs"]}, {"n": "menuweb", "cat": "utilidad", "corta": "Menú con buscador que se abre dentro de WhatsApp (experimental)", "uso": "menuweb", "alias": []}]}/*FIN*/;
+</script>
+<script>
+(() => {
+  const D = window.MENU, P = D.prefijo || '*'
+  const $ = id => document.getElementById(id)
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+  const sinTilde = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const cats = Object.entries(D.categorias).filter(([k]) => D.comandos.some(c => c.cat === k))
+  let actual = cats[0] ? cats[0][0] : null, abierto = null
+
+  $('prefijo').textContent = P
+  $('total').textContent = D.comandos.length + ' comandos'
+
+  // "ss (responde a un video) [doble]" -> sintaxis "ss [doble]" + nota "responde a un video"
+  function partir(uso) {
+    const notas = []
+    const sint = uso.replace(/\s*\(([^)]*)\)/g, (_, n) => (notas.push(n), '')).trim()
+    return { sint, nota: notas.join('. ') }
+  }
+  function pintar(sint) {
+    const partes = sint.match(/<[^>]*>|\[[^\]]*\]|\S+/g) || ['']
+    let h = '<span class="p">' + esc(P) + '</span>' + esc(partes[0])
+    for (const t of partes.slice(1)) {
+      const cls = t.startsWith('[') ? 'o' : t.startsWith('@') ? 'm' : 'r'
+      h += ' <span class="' + cls + '">' + esc(t).replace(/\|/g, '|<wbr>') + '</span>'
+    }
+    return h
+  }
+
+  function fila(c, conCat) {
+    const { sint, nota } = partir(c.uso)
+    const id = 'd-' + c.n
+    const cat = conCat && D.categorias[c.cat] ? '<span class="etq">' + esc(D.categorias[c.cat].nombre) + '</span>' : ''
+    let det = '<dl>'
+    if (nota) det += '<div><dt>Cómo se usa</dt><dd class="nota">' + esc(nota.charAt(0).toUpperCase() + nota.slice(1)) + '</dd></div>'
+    if (c.ejemplo) det += '<div><dt>Ejemplo</dt><dd class="ej">' + esc(P + c.ejemplo) + '</dd></div>'
+    if (c.alias && c.alias.length) det += '<div><dt>También funciona como</dt><dd class="nota">' + c.alias.map(a => esc(P + a)).join(', ') + '</dd></div>'
+    if (det === '<dl>') det += '<div><dt>Cómo se usa</dt><dd class="nota">Escríbelo tal cual en el chat.</dd></div>'
+    det += '</dl><div class="acciones"><button type="button" class="copiar" data-copiar="' + esc(P + c.n + ' ') + '">Copiar ' + esc(P + c.n) + '</button>'
+    if (D.numero) det += '<a class="chat" href="https://wa.me/' + esc(D.numero) + '?text=' + encodeURIComponent(P + c.n + ' ') + '">Escribir al bot</a>'
+    det += '</div>'
+    return '<li class="item"><button type="button" class="fila" aria-expanded="false" aria-controls="' + esc(id) + '" data-n="' + esc(c.n) + '">' +
+      '<span class="sintaxis">' + pintar(sint) + cat + '</span><span class="corta">' + esc(c.corta) + '</span></button>' +
+      '<div class="detalle" id="' + esc(id) + '" hidden>' + det + '</div></li>'
+  }
+
+  function chips() {
+    $('cats').innerHTML = cats.map(([k, v]) => {
+      const n = D.comandos.filter(c => c.cat === k).length
+      return '<button type="button" class="cat" data-cat="' + esc(k) + '" aria-pressed="' + (k === actual) + '">' + esc(v.nombre) + '<span>' + n + '</span></button>'
+    }).join('')
+  }
+
+  function mostrar() {
+    const q = sinTilde($('buscar').value.trim().replace(new RegExp('^\\' + P), ''))
+    $('redactor').classList.toggle('con-texto', !!q)
+    $('cabeza').classList.toggle('buscando', !!q)
+    let h
+    if (q) {
+      const palabras = q.split(/\s+/)
+      const r = D.comandos.map(c => {
+        const nombre = sinTilde(c.n), todo = sinTilde([c.n, ...(c.alias || []), c.corta, c.uso, c.ejemplo || ''].join(' '))
+        if (!palabras.every(p => todo.includes(p))) return null
+        const puntos = nombre === q ? 0 : nombre.startsWith(q) ? 1 : (c.alias || []).some(a => sinTilde(a).startsWith(q)) ? 2 : 3
+        return [puntos, c]
+      }).filter(Boolean).sort((a, b) => a[0] - b[0] || a[1].n.localeCompare(b[1].n))
+      h = r.length
+        ? '<section class="seccion"><h2>' + r.length + (r.length === 1 ? ' resultado' : ' resultados') + '</h2></section><ul class="lista">' + r.map(([, c]) => fila(c, true)).join('') + '</ul>'
+        : '<div class="vacio"><strong>Ningún comando coincide con “' + esc($('buscar').value.trim()) + '”</strong>Prueba con otra palabra, por ejemplo lo que quieres hacer: sticker, banco, música.</div>'
+    } else if (actual) {
+      const v = D.categorias[actual]
+      h = '<section class="seccion"><h2>' + esc(v.nombre) + '</h2><p>' + esc(v.desc) + '</p></section><ul class="lista">' +
+        D.comandos.filter(c => c.cat === actual).map(c => fila(c, false)).join('') + '</ul>'
+    } else h = '<div class="vacio"><strong>Todavía no hay comandos</strong>Vuelve a exportar el menú desde el bot.</div>'
+    $('contenido').innerHTML = h
+    abierto = null
+  }
+
+  function avisar(t) {
+    const a = $('aviso'); a.textContent = t; a.classList.add('ver')
+    clearTimeout(avisar.t); avisar.t = setTimeout(() => a.classList.remove('ver'), 1600)
+  }
+  async function copiar(t) {
+    try { await navigator.clipboard.writeText(t) } catch {
+      const x = document.createElement('textarea'); x.value = t; x.style.position = 'fixed'; x.style.opacity = '0'
+      document.body.appendChild(x); x.select(); try { document.execCommand('copy') } catch {} x.remove()
+    }
+    avisar('Copiado: ' + t.trim() + '. Pégalo en el chat')
+  }
+
+  $('cats').addEventListener('click', e => {
+    const b = e.target.closest('.cat'); if (!b) return
+    actual = b.dataset.cat; chips(); mostrar(); window.scrollTo(0, 0)
+    const sel = $('cats').querySelector('[aria-pressed="true"]')
+    if (sel) sel.scrollIntoView({ inline: 'nearest', block: 'nearest' })
+  })
+  $('contenido').addEventListener('click', e => {
+    const c = e.target.closest('[data-copiar]'); if (c) return copiar(c.dataset.copiar)
+    const f = e.target.closest('.fila'); if (!f) return
+    const d = document.getElementById(f.getAttribute('aria-controls'))
+    if (abierto && abierto !== f) { abierto.setAttribute('aria-expanded', 'false'); document.getElementById(abierto.getAttribute('aria-controls')).hidden = true }
+    const ver = f.getAttribute('aria-expanded') !== 'true'
+    f.setAttribute('aria-expanded', String(ver)); d.hidden = !ver; abierto = ver ? f : null
+  })
+  $('buscar').addEventListener('input', mostrar)
+  $('borrar').addEventListener('click', () => { $('buscar').value = ''; mostrar(); $('buscar').focus() })
+
+  chips(); mostrar()
+})()
+</script>
+</body>
+</html>
